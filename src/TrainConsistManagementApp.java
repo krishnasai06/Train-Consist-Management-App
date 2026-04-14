@@ -1,24 +1,24 @@
-import java.util.Arrays;
-
 public class TrainConsistManagementApp {
 
     public static void main(String[] args) {
 
-        String[] bogieNames = {
-                "Sleeper",
-                "AC Chair",
-                "First Class",
-                "General",
-                "Luxury"
-        };
+        String[] bogieIds = {"BG101", "BG205", "BG309", "BG412", "BG550"};
+        String searchKey = "BG309";
 
-        System.out.println("Before Sorting:");
-        System.out.println(Arrays.toString(bogieNames));
+        boolean found = false;
 
-        // ✅ Built-in sorting
-        Arrays.sort(bogieNames);
+        // ✅ Linear Search
+        for (int i = 0; i < bogieIds.length; i++) {
+            if (bogieIds[i].equals(searchKey)) {
+                found = true;
+                break; // stop when found
+            }
+        }
 
-        System.out.println("\nAfter Sorting:");
-        System.out.println(Arrays.toString(bogieNames));
+        if (found) {
+            System.out.println("Bogie ID " + searchKey + " FOUND");
+        } else {
+            System.out.println("Bogie ID " + searchKey + " NOT FOUND");
+        }
     }
 }
