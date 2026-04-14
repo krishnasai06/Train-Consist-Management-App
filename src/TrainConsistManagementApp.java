@@ -2,17 +2,30 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.regex.*;
 
-// ✅ Custom Exception (UC14)
+// =======================
+// UC14: Custom Exception
+// =======================
 class InvalidCapacityException extends Exception {
     public InvalidCapacityException(String message) {
         super(message);
     }
 }
 
-// ✅ Passenger Bogie
+// =======================
+// UC15: Runtime Exception
+// =======================
+class CargoSafetyException extends RuntimeException {
+    public CargoSafetyException(String message) {
+        super(message);
+    }
+}
+
+// =======================
+// Passenger Bogie
+// =======================
 class PassengerBogie {
-    String type;
-    int capacity;
+    private String type;
+    private int capacity;
 
     public PassengerBogie(String type, int capacity) throws InvalidCapacityException {
         if (capacity <= 0) {
@@ -26,29 +39,49 @@ class PassengerBogie {
     public int getCapacity() { return capacity; }
 }
 
-// ✅ Goods Bogie
+// =======================
+// Goods Bogie
+// =======================
 class GoodsBogie {
-    String type;
-    String cargo;
+    private String type;
+    private String cargo;
 
-    public GoodsBogie(String type, String cargo) {
+    public GoodsBogie(String type) {
         this.type = type;
-        this.cargo = cargo;
     }
 
     public String getType() { return type; }
     public String getCargo() { return cargo; }
+
+    // UC15: Safe cargo assignment
+    public void assignCargo(String cargo) {
+        try {
+            if (type.equals("Rectangular") && cargo.equals("Petroleum")) {
+                throw new CargoSafetyException("Unsafe: Rectangular cannot carry Petroleum");
+            }
+            this.cargo = cargo;
+            System.out.println("Cargo assigned: " + cargo);
+
+        } catch (CargoSafetyException e) {
+            System.out.println("Error: " + e.getMessage());
+
+        } finally {
+            System.out.println("Assignment completed for " + type);
+        }
+    }
 }
 
-// ✅ Main Class
+// =======================
+// MAIN CLASS
+// =======================
 public class TrainConsistManagementApp {
 
     public static void main(String[] args) {
 
         try {
-            // =============================
+            // =======================
             // UC7: Sorting
-            // =============================
+            // =======================
             List<PassengerBogie> passengers = new ArrayList<>();
             passengers.add(new PassengerBogie("Sleeper", 72));
             passengers.add(new PassengerBogie("AC Chair", 56));
@@ -56,41 +89,41 @@ public class TrainConsistManagementApp {
 
             passengers.sort(Comparator.comparingInt(PassengerBogie::getCapacity));
 
-            System.out.println("Sorted Bogies:");
+            System.out.println("=== Sorted Bogies ===");
             passengers.forEach(b -> System.out.println(b.getType() + " " + b.getCapacity()));
 
-            // =============================
+            // =======================
             // UC8: Filtering
-            // =============================
+            // =======================
             List<PassengerBogie> filtered = passengers.stream()
                     .filter(b -> b.getCapacity() > 60)
                     .collect(Collectors.toList());
 
-            System.out.println("\nFiltered (Capacity > 60):");
+            System.out.println("\n=== Filtered (>60) ===");
             filtered.forEach(b -> System.out.println(b.getType()));
 
-            // =============================
+            // =======================
             // UC9: Grouping
-            // =============================
+            // =======================
             Map<String, List<PassengerBogie>> grouped =
                     passengers.stream()
                             .collect(Collectors.groupingBy(PassengerBogie::getType));
 
-            System.out.println("\nGrouped Bogies:");
+            System.out.println("\n=== Grouped ===");
             grouped.forEach((k, v) -> System.out.println(k + " -> " + v.size()));
 
-            // =============================
+            // =======================
             // UC10: Total Seats
-            // =============================
+            // =======================
             int totalSeats = passengers.stream()
                     .map(PassengerBogie::getCapacity)
                     .reduce(0, Integer::sum);
 
             System.out.println("\nTotal Seats: " + totalSeats);
 
-            // =============================
+            // =======================
             // UC11: Regex Validation
-            // =============================
+            // =======================
             String trainId = "TRN-1234";
             String cargoCode = "PET-AB";
 
@@ -100,24 +133,27 @@ public class TrainConsistManagementApp {
             System.out.println("\nTrain ID Valid: " + validTrain);
             System.out.println("Cargo Code Valid: " + validCargo);
 
-            // =============================
+            // =======================
             // UC12: Safety Check
-            // =============================
+            // =======================
             List<GoodsBogie> goods = new ArrayList<>();
-            goods.add(new GoodsBogie("Cylindrical", "Petroleum"));
-            goods.add(new GoodsBogie("Open", "Coal"));
+            goods.add(new GoodsBogie("Cylindrical"));
+            goods.add(new GoodsBogie("Open"));
+
+            goods.get(0).assignCargo("Petroleum");
+            goods.get(1).assignCargo("Coal");
 
             boolean isSafe = goods.stream()
                     .allMatch(b ->
                             !b.getType().equals("Cylindrical") ||
-                                    b.getCargo().equals("Petroleum")
+                                    "Petroleum".equals(b.getCargo())
                     );
 
             System.out.println("\nSafety Check: " + (isSafe ? "SAFE" : "NOT SAFE"));
 
-            // =============================
-            // UC13: Performance Comparison
-            // =============================
+            // =======================
+            // UC13: Performance
+            // =======================
             List<PassengerBogie> bigList = new ArrayList<>();
             for (int i = 0; i < 10000; i++) {
                 bigList.add(new PassengerBogie("B" + i, (i % 100) + 1));
@@ -139,13 +175,15 @@ public class TrainConsistManagementApp {
             System.out.println("\nLoop Time: " + (endLoop - startLoop));
             System.out.println("Stream Time: " + (endStream - startStream));
 
-            // =============================
-            // UC14: Exception Handling
-            // =============================
-            PassengerBogie invalid = new PassengerBogie("Test", -5); // ❌ will throw
+            // =======================
+            // UC14: Exception Demo
+            // =======================
+            PassengerBogie invalid = new PassengerBogie("Test", -5); // will throw
 
         } catch (InvalidCapacityException e) {
             System.out.println("\nException: " + e.getMessage());
         }
+
+        System.out.println("\n=== Program Completed Safely ===");
     }
 }
