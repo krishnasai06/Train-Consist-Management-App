@@ -1,17 +1,15 @@
 import java.util.*;
+import java.util.stream.Collectors;
 
-// Bogie class
 class Bogie {
     String name;
     int capacity;
 
-    // Constructor
     public Bogie(String name, int capacity) {
         this.name = name;
         this.capacity = capacity;
     }
 
-    // Getter methods
     public String getName() {
         return name;
     }
@@ -20,30 +18,28 @@ class Bogie {
         return capacity;
     }
 
-    // Display method
     public void display() {
-        System.out.println("Bogie: " + name + " | Capacity: " + capacity);
+        System.out.println(name + " - " + capacity);
     }
 }
 
-// Main class
 public class TrainConsistManagementApp {
+
     public static void main(String[] args) {
 
-        // Step 1: Create List
         List<Bogie> bogies = new ArrayList<>();
-
-        // Step 2: Add passenger bogies
         bogies.add(new Bogie("Sleeper", 72));
         bogies.add(new Bogie("AC Chair", 56));
         bogies.add(new Bogie("First Class", 24));
 
-        // Step 3: Sort using Comparator (by capacity)
-        bogies.sort(Comparator.comparingInt(Bogie::getCapacity));
+        // ✅ Stream Filtering (capacity > 60)
+        List<Bogie> filtered = bogies.stream()
+                .filter(b -> b.getCapacity() > 60)
+                .collect(Collectors.toList());
 
-        // Step 4: Display sorted bogies
-        System.out.println("Bogies sorted by capacity (Ascending):");
-        for (Bogie b : bogies) {
+        System.out.println("Filtered Bogies (Capacity > 60):");
+
+        for (Bogie b : filtered) {
             b.display();
         }
     }
