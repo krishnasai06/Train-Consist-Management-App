@@ -17,10 +17,6 @@ class Bogie {
     public int getCapacity() {
         return capacity;
     }
-
-    public void display() {
-        System.out.println(name + " - " + capacity);
-    }
 }
 
 public class TrainConsistManagementApp {
@@ -30,17 +26,20 @@ public class TrainConsistManagementApp {
         List<Bogie> bogies = new ArrayList<>();
         bogies.add(new Bogie("Sleeper", 72));
         bogies.add(new Bogie("AC Chair", 56));
+        bogies.add(new Bogie("Sleeper", 70));
         bogies.add(new Bogie("First Class", 24));
 
-        // ✅ Stream Filtering (capacity > 60)
-        List<Bogie> filtered = bogies.stream()
-                .filter(b -> b.getCapacity() > 60)
-                .collect(Collectors.toList());
+        // ✅ Grouping by bogie type (name)
+        Map<String, List<Bogie>> grouped = bogies.stream()
+                .collect(Collectors.groupingBy(Bogie::getName));
 
-        System.out.println("Filtered Bogies (Capacity > 60):");
+        // Display grouped result
+        for (String key : grouped.keySet()) {
+            System.out.println("Type: " + key);
 
-        for (Bogie b : filtered) {
-            b.display();
+            for (Bogie b : grouped.get(key)) {
+                System.out.println("   Capacity: " + b.getCapacity());
+            }
         }
     }
 }
