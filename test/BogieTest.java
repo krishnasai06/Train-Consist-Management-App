@@ -1,47 +1,51 @@
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
-class CargoTest {
+class BubbleSortTest {
 
-    @Test
-    void testCargo_SafeAssignment() {
-        GoodsBogie b = new GoodsBogie("Cylindrical");
-        b.assignCargo("Petroleum");
+    private int[] bubbleSort(int[] arr) {
+        int n = arr.length;
 
-        assertEquals("Petroleum", b.getCargo());
+        for (int i = 0; i < n - 1; i++) {
+            for (int j = 0; j < n - i - 1; j++) {
+
+                if (arr[j] > arr[j + 1]) {
+                    int temp = arr[j];
+                    arr[j] = arr[j + 1];
+                    arr[j + 1] = temp;
+                }
+            }
+        }
+        return arr;
     }
 
     @Test
-    void testCargo_UnsafeAssignmentHandled() {
-        GoodsBogie b = new GoodsBogie("Rectangular");
-        b.assignCargo("Petroleum");
-
-        assertNull(b.getCargo()); // not assigned
+    void testSort_BasicSorting() {
+        int[] arr = {72, 56, 24, 70, 60};
+        assertArrayEquals(new int[]{24, 56, 60, 70, 72}, bubbleSort(arr));
     }
 
     @Test
-    void testCargo_CargoNotAssignedAfterFailure() {
-        GoodsBogie b = new GoodsBogie("Rectangular");
-        b.assignCargo("Petroleum");
-
-        assertNull(b.getCargo());
+    void testSort_AlreadySortedArray() {
+        int[] arr = {24, 56, 60, 70, 72};
+        assertArrayEquals(new int[]{24, 56, 60, 70, 72}, bubbleSort(arr));
     }
 
     @Test
-    void testCargo_ProgramContinuesAfterException() {
-        GoodsBogie b = new GoodsBogie("Rectangular");
-
-        b.assignCargo("Petroleum"); // error
-        b.assignCargo("Coal");      // should work
-
-        assertEquals("Coal", b.getCargo());
+    void testSort_DuplicateValues() {
+        int[] arr = {72, 56, 56, 24};
+        assertArrayEquals(new int[]{24, 56, 56, 72}, bubbleSort(arr));
     }
 
     @Test
-    void testCargo_FinallyBlockExecution() {
-        GoodsBogie b = new GoodsBogie("Rectangular");
+    void testSort_SingleElementArray() {
+        int[] arr = {50};
+        assertArrayEquals(new int[]{50}, bubbleSort(arr));
+    }
 
-        // No direct assertion for finally, but method must run without crash
-        assertDoesNotThrow(() -> b.assignCargo("Petroleum"));
+    @Test
+    void testSort_AllEqualValues() {
+        int[] arr = {40, 40, 40};
+        assertArrayEquals(new int[]{40, 40, 40}, bubbleSort(arr));
     }
 }
